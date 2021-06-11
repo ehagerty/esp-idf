@@ -1,21 +1,14 @@
-// Copyright 2015-2019 Espressif Systems (Shanghai) PTE LTD
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * SPDX-FileCopyrightText: 2015-2021 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include <string.h>
 #include <esp_types.h>
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "esp_log.h"
+#include "esp_check.h"
 #include "soc/gpio_periph.h"
 #include "soc/ledc_periph.h"
 #include "soc/rtc.h"
@@ -29,12 +22,8 @@
 
 static const char* LEDC_TAG = "ledc";
 
-#define LEDC_CHECK(a, str, ret_val) \
-    if (!(a)) { \
-        ESP_LOGE(LEDC_TAG, "%s(%d): %s", __FUNCTION__, __LINE__, str); \
-        return (ret_val); \
-    }
-#define LEDC_ARG_CHECK(a, param) LEDC_CHECK(a, param " argument is invalid", ESP_ERR_INVALID_ARG)
+#define LEDC_CHECK(a, str, ret_val) ESP_RETURN_ON_FALSE(a, ret_val, LEDC_TAG, "%s", str);
+#define LEDC_ARG_CHECK(a, param) ESP_RETURN_ON_FALSE(a, ESP_ERR_INVALID_ARG, LEDC_TAG, param " argument is invalid");
 
 typedef struct {
     ledc_mode_t speed_mode;

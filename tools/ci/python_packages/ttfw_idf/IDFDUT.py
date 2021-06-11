@@ -33,7 +33,6 @@ except ImportError:
 
 from serial.tools import list_ports
 from tiny_test_fw import DUT, Utility
-from tiny_test_fw.Utility import format_case_id
 
 try:
     import esptool
@@ -72,8 +71,7 @@ class IDFRecvThread(DUT.RecvThread):
     def collect_performance(self, comp_data):
         matches = self.PERFORMANCE_PATTERN.findall(comp_data)
         for match in matches:
-            Utility.console_log('[Performance][{}]: {}'.format(format_case_id(match[0], self.dut.app.target, self.dut.app.config_name), match[1]),
-                                color='orange')
+            Utility.console_log('[Performance][{}]: {}'.format(match[0], match[1]), color='orange')
             self.performance_items.put((match[0], match[1]))
 
     def detect_exception(self, comp_data):
@@ -506,8 +504,7 @@ class IDFDUT(DUT.SerialDUT):
     def close(self):
         super(IDFDUT, self).close()
         if not self.allow_dut_exception and self.get_exceptions():
-            Utility.console_log('DUT exception detected on {}'.format(self), color='red')
-            raise IDFDUTException()
+            raise IDFDUTException('DUT exception detected on {}'.format(self))
 
 
 class ESP32DUT(IDFDUT):

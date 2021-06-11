@@ -1,16 +1,8 @@
-// Copyright 2015-2020 Espressif Systems (Shanghai) PTE LTD
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+/*
+ * SPDX-FileCopyrightText: 2015-2021 Espressif Systems (Shanghai) CO LTD
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
 #include <string.h>
 #include <stdio.h>
 #include "sdkconfig.h"
@@ -401,7 +393,9 @@ esp_err_t i2c_driver_delete(i2c_port_t i2c_num)
     p_i2c->intr_handle = NULL;
 
     if (p_i2c->cmd_mux) {
+        // Let any command in progress finish.
         xSemaphoreTake(p_i2c->cmd_mux, portMAX_DELAY);
+        xSemaphoreGive(p_i2c->cmd_mux);
         vSemaphoreDelete(p_i2c->cmd_mux);
     }
     if (p_i2c_obj[i2c_num]->cmd_evt_queue) {

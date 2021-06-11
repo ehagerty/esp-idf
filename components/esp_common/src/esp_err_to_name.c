@@ -538,6 +538,12 @@ static const esp_err_msg_t esp_err_msg_table[] = {
 #   ifdef      ESP_ERR_ESP_NETIF_DNS_NOT_CONFIGURED
     ERR_TBL_IT(ESP_ERR_ESP_NETIF_DNS_NOT_CONFIGURED),           /* 20490 0x500a */
 #   endif
+#   ifdef      ESP_ERR_ESP_NETIF_MLD6_FAILED
+    ERR_TBL_IT(ESP_ERR_ESP_NETIF_MLD6_FAILED),                  /* 20491 0x500b */
+#   endif
+#   ifdef      ESP_ERR_ESP_NETIF_IP6_ADDR_FAILED
+    ERR_TBL_IT(ESP_ERR_ESP_NETIF_IP6_ADDR_FAILED),              /* 20492 0x500c */
+#   endif
     // components/esp_common/include/esp_err.h
 #   ifdef      ESP_ERR_FLASH_BASE
     ERR_TBL_IT(ESP_ERR_FLASH_BASE),                             /* 24576 0x6000 Starting number of flash error codes */

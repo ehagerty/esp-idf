@@ -73,17 +73,17 @@ static void on_ppp_status_changed(ppp_pcb *pcb, int err_code, void *ctx)
                 ip4_addr_set(&ip_info->netmask, ip_2_ip4(&pppif->netmask));
                 ip4_addr_set(&ip_info->gw, ip_2_ip4(&pppif->gw));
 
-                evt.ip_info.ip.addr = pppif->ip_addr.u_addr.ip4.addr;
-                evt.ip_info.gw.addr = pppif->gw.u_addr.ip4.addr;
-                evt.ip_info.netmask.addr = pppif->netmask.u_addr.ip4.addr;
+                ip4_addr_set(&evt.ip_info.ip, ip_2_ip4(&pppif->ip_addr));
+                ip4_addr_set(&evt.ip_info.gw, ip_2_ip4(&pppif->gw));
+                ip4_addr_set(&evt.ip_info.netmask, ip_2_ip4(&pppif->netmask));
 
                 dest_ip = dns_getserver(0);
                 if(dest_ip != NULL){
-                    ns1.addr = (*dest_ip).u_addr.ip4.addr;
+                    ip4_addr_set(&ns1, ip_2_ip4(dest_ip));
                 }
                 dest_ip = dns_getserver(1);
                 if(dest_ip != NULL){
-                    ns2.addr = (*dest_ip).u_addr.ip4.addr;
+                    ip4_addr_set(&ns2, ip_2_ip4(dest_ip));
                 }
                 ESP_LOGI(TAG, "Name Server1: " IPSTR, IP2STR(&ns1));
                 ESP_LOGI(TAG, "Name Server2: " IPSTR, IP2STR(&ns2));
@@ -248,18 +248,18 @@ static uint32_t pppos_low_level_output(ppp_pcb *pcb, uint8_t *data, uint32_t len
 
 esp_err_t esp_netif_ppp_set_auth(esp_netif_t *netif, esp_netif_auth_type_t authtype, const char *user, const char *passwd)
 {
-    if (_IS_NETIF_POINT2POINT_TYPE(netif, PPP_LWIP_NETIF)) {
+    if (!_IS_NETIF_POINT2POINT_TYPE(netif, PPP_LWIP_NETIF)) {
         return ESP_ERR_ESP_NETIF_INVALID_PARAMS;
     }
 #if PPP_AUTH_SUPPORT
     lwip_peer2peer_ctx_t *ppp_ctx = (lwip_peer2peer_ctx_t *)netif->related_data;
     assert(ppp_ctx->base.netif_type == PPP_LWIP_NETIF);
     pppapi_set_auth(ppp_ctx->ppp, authtype, user, passwd);
+    return ESP_OK;
 #else
     ESP_LOGE(TAG, "%s failed: No authorisation enabled in menuconfig", __func__);
     return ESP_ERR_ESP_NETIF_IF_NOT_READY;
 #endif
-    return ESP_OK;
 }
 
 void esp_netif_ppp_set_default_netif(netif_related_data_t *netif_related)
